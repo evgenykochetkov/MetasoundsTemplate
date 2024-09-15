@@ -27,6 +27,8 @@ public class MyCustomNodes : ModuleRules
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
+				"MetasoundFrontend",
+				"MetasoundGraphCore",
 			}
 			);
 			
@@ -39,6 +41,7 @@ public class MyCustomNodes : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
+				"SignalProcessing",
 			}
 			);
 		
