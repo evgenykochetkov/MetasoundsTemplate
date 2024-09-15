@@ -1,0 +1,11 @@
+# Disable automatic #includes sorting, because it messes with
+# "the .generated.h file should always be the last #include in a header" rule
+IncludeBlocks: Preserve
+SortIncludes: Never
+
+# You can add more style options here,
+# UBT will not overwrite this file if it already exists.
+ColumnLimit: 90
+BinPackArguments: false
+BinPackParameters: false
+PenaltyReturnTypeOnItsOwnLine: 1000000
