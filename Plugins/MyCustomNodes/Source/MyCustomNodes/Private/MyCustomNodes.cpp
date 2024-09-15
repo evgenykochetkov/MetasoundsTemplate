@@ -1,12 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MyCustomNodes.h"
+#include "MetasoundFrontendRegistryContainer.h"
 
 #define LOCTEXT_NAMESPACE "FMyCustomNodesModule"
 
 void FMyCustomNodesModule::StartupModule() {
   // This code will execute after your module is loaded into memory; the exact
   // timing is specified in the .uplugin file per-module
+  FMetasoundFrontendRegistryContainer::Get()->RegisterPendingNodes();
 }
 
 void FMyCustomNodesModule::ShutdownModule() {
