@@ -47,6 +47,7 @@ public:
 
     // Reading samples data from a SoundWave turned out to be way less straightforward than it should. 
     // See https://forums.unrealengine.com/t/how-to-reliably-access-usoundwave-pcm-data-with-or-without-fasyncaudiodecompress/444631/8
+    // TODO: will this still work in a release version with cooked data? 
     const FWaveAsset WaveAsset = *BankSoundWave;
     FSoundWaveProxyPtr ProxyPtr = WaveAsset.GetSoundWaveProxy();
     if (ProxyPtr.IsValid() && WaveAsset.IsSoundWaveValid()) {
@@ -164,15 +165,24 @@ public:
 #pragma endregion Operator boilerplate
 
   void Execute() {
-    if (AllBankSamples.Num() == 0 || FMath::IsNearlyEqual(PrevNormalizedFrameIndexIndex, *NormalizedFrameIndex)) {
+    bool IsIndexUnchanged = FMath::IsNearlyEqual(PrevNormalizedFrameIndexIndex,
+                                                 *NormalizedFrameIndex);
+    if (AllBankSamples.Num() == 0 || IsIndexUnchanged) {
       return;
     }
 
-    uint32 MaxFrameIndex =  (AllBankSamples.Num() / FrameSize) - 1;
-    int FrameIndex = *NormalizedFrameIndex * MaxFrameIndex;
+    uint32 MaxFrameIndex = (AllBankSamples.Num() / FrameSize) - 1;
+    float ScaledFrameIndex = *NormalizedFrameIndex * MaxFrameIndex;
+    uint32 FrameIndexA = FMath::FloorToInt32(ScaledFrameIndex);
+    uint32 FrameIndexB = FMath::CeilToInt32(ScaledFrameIndex);
+    float BlendFactorA = ScaledFrameIndex - FrameIndexA;
+    float BlendFactorB = 1.f - BlendFactorA;
+
     const TArrayView<float> WaveTableSamplesView = WaveTable->GetSamples();
     for (int32 i = 0; i < FrameSize; i++) {
-      WaveTableSamplesView[i] = AllBankSamples[i + FrameSize * FrameIndex];
+      float SampleA = AllBankSamples[i + FrameSize * FrameIndexA];
+      float SampleB = AllBankSamples[i + FrameSize * FrameIndexB];
+      WaveTableSamplesView[i] = SampleA * BlendFactorA + SampleB * BlendFactorB;
     }
 
     PrevNormalizedFrameIndexIndex = *NormalizedFrameIndex;
