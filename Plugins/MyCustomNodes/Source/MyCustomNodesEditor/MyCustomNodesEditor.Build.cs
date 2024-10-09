@@ -23,6 +23,7 @@ public class MyCustomNodesEditor : ModuleRules
                 "MyCustomNodes",
                 "UnrealEd",
                 "AudioEditor", // for loading audio files
+                "MetasoundEditor",
             }
         );
     }

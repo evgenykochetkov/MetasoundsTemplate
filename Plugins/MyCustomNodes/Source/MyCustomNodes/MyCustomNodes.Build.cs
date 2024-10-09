@@ -44,6 +44,7 @@ public class MyCustomNodes : ModuleRules
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
 				"SignalProcessing",
+				"AudioExtensions",
 			}
 			);
 		
