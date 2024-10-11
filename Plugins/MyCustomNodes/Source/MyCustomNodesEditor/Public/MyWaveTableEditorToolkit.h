@@ -19,7 +19,7 @@ public:
   FString GetWorldCentricTabPrefix() const override { return "My WaveTable "; }
   FLinearColor GetWorldCentricTabColorScale() const override { return {}; }
 
-  TArray<float> GetImportedData() const;
+  TArray<float>* GetImportedData() const;
   int GetSamplesPerFrame() const;
 
   //FNotifyHook

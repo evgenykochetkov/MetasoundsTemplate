@@ -8,10 +8,10 @@
 class MYCUSTOMNODESEDITOR_API SMyWaveTableWidget : public SLeafWidget {
 public:
   SLATE_BEGIN_ARGS(SMyWaveTableWidget)
-            : _ImportedData(TArray<float>())
+            : _ImportedData(nullptr)
             , _SamplesPerFrame(2048)
     {}
-    SLATE_ATTRIBUTE(TArray<float>, ImportedData)
+    SLATE_ATTRIBUTE(TArray<float>*, ImportedData)
     SLATE_ATTRIBUTE(int, SamplesPerFrame)
   SLATE_END_ARGS()
 
@@ -21,9 +21,9 @@ public:
   FVector2D ComputeDesiredSize(float) const override;
 
 private:
-  TAttribute<TArray<float>> ImportedData;
+  TAttribute<TArray<float>*> ImportedData;
   TAttribute<int> SamplesPerFrame;
-  
+
   FTransform2D GetPointsTransform(const FGeometry& AllottedGeometry) const;
 
   const FLinearColor PlotFrontColor = FLinearColor(1.0, 0.5, 0.0);

@@ -87,9 +87,8 @@ void FMyWaveTableEditorToolkit::UnregisterTabSpawners(
   TabManager->UnregisterTabSpawner("MyWaveTableDetailsTab");
 }
 
-TArray<float> FMyWaveTableEditorToolkit::GetImportedData() const {
-  UE_LOG(LogTemp, Warning, TEXT("FMyWaveTableEditorToolkit: GetImportedData called"))
-  return MyWaveTable->ImportedData;
+TArray<float>* FMyWaveTableEditorToolkit::GetImportedData() const {
+  return &(MyWaveTable->ImportedData);
 }
 
 int FMyWaveTableEditorToolkit::GetSamplesPerFrame() const {

@@ -10,9 +10,12 @@ void SMyWaveTableWidget::Construct(const FArguments &InArgs) {
 }
 
 int32 SMyWaveTableWidget::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const {
-  const TArray<float> Data = ImportedData.Get();
+  const auto Samples = ImportedData.Get();
+  if (Samples == nullptr) {
+    return LayerId;
+  }
   const int32 PointsPerFrame = SamplesPerFrame.Get();
-  const int32 NumFrames = Data.Num() / PointsPerFrame;
+  const int32 NumFrames = Samples->Num() / PointsPerFrame;
 
   const FTransform2D PointsTransform = GetPointsTransform(AllottedGeometry);
   TArray<FVector2D> Points;
@@ -25,7 +28,7 @@ int32 SMyWaveTableWidget::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
 
     for (int32 PointIndex = 0; PointIndex < PointsPerFrame; ++PointIndex) {
       const float X = PointIndex / (PointsPerFrame - 1.0) + NormalizedIndexBipolar * 0.125;
-      const float Y = Data[PointIndex + PointIndexOffset] * 0.15 + NormalizedIndexBipolar * 0.85;
+      const float Y = Samples->GetData()[PointIndex + PointIndexOffset] * 0.15 + NormalizedIndexBipolar * 0.85;
       Points.Add(PointsTransform.TransformPoint(FVector2D(X, Y)));
     }
 
