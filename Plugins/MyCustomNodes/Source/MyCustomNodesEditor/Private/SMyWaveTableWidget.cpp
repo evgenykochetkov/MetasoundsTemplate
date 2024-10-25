@@ -23,16 +23,16 @@ int32 SMyWaveTableWidget::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
     Points.Empty(PointsPerFrame);
     int32 PointIndexOffset = PointsPerFrame * FrameIndex;
 
-    float NormalizedIndex = FrameIndex / (NumFrames - 1.0); // [0, 1]
-    float NormalizedIndexBipolar = NormalizedIndex * 2.0 - 1.0; // [-1, 1] 
+    const float NormalizedIndex = FrameIndex / (NumFrames - 1.0); // [0, 1]
+    const float NormalizedIndexBipolar = NormalizedIndex * 2.0 - 1.0; // [-1, 1] 
 
-    for (int32 PointIndex = 0; PointIndex < PointsPerFrame; ++PointIndex) {
+    for (int32 PointIndex = 0; PointIndex < PointsPerFrame; PointIndex++) {
       const float X = PointIndex / (PointsPerFrame - 1.0) + NormalizedIndexBipolar * 0.125;
-      const float Y = Samples->GetData()[PointIndex + PointIndexOffset] * 0.15 + NormalizedIndexBipolar * 0.85;
+      const float Y = Samples->GetData()[PointIndex + PointIndexOffset] * 0.15 + NormalizedIndexBipolar;
       Points.Add(PointsTransform.TransformPoint(FVector2D(X, Y)));
     }
 
-    auto LineColor = FMath::Lerp(PlotFrontColor, PlotBackColor, FMath::Pow(NormalizedIndex, 2.25));
+    auto LineColor = FMath::Lerp(PlotFrontColor, PlotBackColor, FMath::Pow(NormalizedIndex, 1.5));
     FSlateDrawElement::MakeLines(
         OutDrawElements,
         LayerId,
@@ -41,7 +41,7 @@ int32 SMyWaveTableWidget::OnPaint(const FPaintArgs& Args, const FGeometry& Allot
         ESlateDrawEffect::None,
         LineColor,
         true,
-        1.25);
+        2.0f);
   }
   
   return LayerId;

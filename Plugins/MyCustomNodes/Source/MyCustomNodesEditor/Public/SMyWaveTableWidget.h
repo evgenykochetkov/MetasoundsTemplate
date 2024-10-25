@@ -27,5 +27,5 @@ private:
   FTransform2D GetPointsTransform(const FGeometry& AllottedGeometry) const;
 
   const FLinearColor PlotFrontColor = FLinearColor(1.0, 0.5, 0.0);
-  const FLinearColor PlotBackColor = FLinearColor(0.7, 0.7, 0.7);
+  const FLinearColor PlotBackColor = FLinearColor(0.75, 0.5, 1.0);
 };
