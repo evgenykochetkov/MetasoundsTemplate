@@ -14,3 +14,7 @@ Saved
 *.xcworkspace
 .idea
 /Build
+
+# config file created by Rider
+*.uproject.DotSettings.user
+
