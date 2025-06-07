@@ -49,7 +49,7 @@ void FMyWaveTableEditorToolkit::RegisterTabSpawners(
 
   WorkspaceMenuCategory = TabManager->AddLocalWorkspaceMenuCategory(INVTEXT("My WaveTable Editor"));
  
-  TabManager->RegisterTabSpawner("MyWaveTablePlotTab", FOnSpawnTab::CreateLambda([=](const FSpawnTabArgs&)
+  TabManager->RegisterTabSpawner("MyWaveTablePlotTab", FOnSpawnTab::CreateLambda([=, this](const FSpawnTabArgs&)
   {
           return SNew(SDockTab)
           [

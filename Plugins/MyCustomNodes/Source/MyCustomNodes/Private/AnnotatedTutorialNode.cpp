@@ -4,6 +4,15 @@ replace all occurrences of 'AnnotatedTutorial' and 'MyCustomNodes'
 */
 
 /*
+TODO: figure out changes related to Reset() and constructor,
+see https://github.com/alexirae/unreal-audio-dsp-template-UE5/commit/f43f799e0e570461c470cd58f108e71b2e56df81
+
+check out https://github.com/EpicGames/UnrealEngine/commits/release/Engine/Plugins/Runtime/Metasound/Source/MetasoundStandardNodes
+or https://github.com/EpicGames/UnrealEngine/commits/release/Engine/Plugins/Runtime/Metasound ?
+*/
+
+
+/*
 Sources:
  - https://dev.epicgames.com/community/learning/tutorials/ry7p/creating-metasound
  - TODO: https://dev.epicgames.com/community/learning/tutorials/KJWk/writing-a-pitch-shift-metasound-node
@@ -16,7 +25,8 @@ Writing a new MetaSound node requires only a single private .cpp file.
 
 There are two classes which need to be defined:
  - An operator class deriving from TExecutableOperator
- - A node class deriving from FNodeFacade
+ - A node class deriving from FNodeFacade (a shorthand in the form
+    TNodeFacade<FMyOperator> can be used to reduce boilerplate)
 */
 
 
@@ -171,20 +181,15 @@ public:
   static const FVertexInterface &GetVertexInterface() {
     using namespace AnnotatedTutorialNodeParameterNames;
 
-    static TInputDataVertex<FAudioBuffer> AudioInputVertex(
-        METASOUND_GET_PARAM_NAME_AND_METADATA(InParamNameAudioInput));
-
-    static TInputDataVertex<float> AmplitudeInputVertex(
-        METASOUND_GET_PARAM_NAME_AND_METADATA(InParamNameAmplitude),
-        1.0f);
-
-    static TOutputDataVertex<FAudioBuffer> AudioOutputVertex(
-        METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamNameAudio));
-
     static const FVertexInterface Interface(
-        FInputVertexInterface(AudioInputVertex, AmplitudeInputVertex),
-        FOutputVertexInterface(AudioOutputVertex)
-        );
+      FInputVertexInterface(
+        TInputDataVertex<FAudioBuffer>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamNameAudioInput)),
+        TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamNameAmplitude), 1.0f)
+      ),
+      FOutputVertexInterface(
+        TOutputDataVertex<FAudioBuffer>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamNameAudio))
+      )
+    );
 
     return Interface;
   }
@@ -194,7 +199,7 @@ public:
     using namespace AnnotatedTutorialNodeParameterNames;
 
     FAudioBufferReadRef AudioIn =
-      InParams.InputData.GetOrConstructDataReadReference<FAudioBuffer>(
+      InParams.InputData.GetOrCreateDefaultDataReadReference<FAudioBuffer>(
           METASOUND_GET_PARAM_NAME(InParamNameAudioInput),
           InParams.OperatorSettings);
 
@@ -259,14 +264,7 @@ public:
 
 #pragma region Node
 
-class FAnnotatedTutorialNode : public FNodeFacade {
-public:
-  // Constructor used by the Metasound Frontend.
-  FAnnotatedTutorialNode(const FNodeInitData &InitData)
-      : FNodeFacade(InitData.InstanceName,
-                               InitData.InstanceID,
-                               Metasound::TFacadeOperatorClass<FAnnotatedTutorialOperator>()) {}
-};
+using FAnnotatedTutorialNode = TNodeFacade<FAnnotatedTutorialOperator>;
 
 METASOUND_REGISTER_NODE(FAnnotatedTutorialNode)
 

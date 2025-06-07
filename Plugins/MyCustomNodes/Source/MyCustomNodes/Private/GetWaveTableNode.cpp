@@ -100,8 +100,9 @@ public:
     using namespace GetWaveTableNodeParameterNames;
 
     FMyWaveTableAssetReadRef InMyWaveTableAsset =
-      InParams.InputData.GetOrConstructDataReadReference<FMyWaveTableAsset>(
-        METASOUND_GET_PARAM_NAME(InParamNameMyWaveTable));
+      InParams.InputData.GetOrCreateDefaultDataReadReference<FMyWaveTableAsset>(
+        METASOUND_GET_PARAM_NAME(InParamNameMyWaveTable),
+        InParams.OperatorSettings);
 
     FFloatReadRef InNormalizedFrameIndex =
       InParams.InputData.GetOrCreateDefaultDataReadReference<float>(
@@ -162,6 +163,7 @@ public:
       float SampleB = AllBankSamples->GetData()[i + FrameSize * FrameIndexB];
       WaveTableSamplesView[i] = SampleA * BlendFactorA + SampleB * BlendFactorB;
     }
+    WaveTable->SetFinalValue(WaveTableSamplesView[0]); // to be consistent with FWaveTable::SetData
 
     PrevNormalizedFrameIndexIndex = *NormalizedFrameIndex;
   }
@@ -171,14 +173,7 @@ public:
 
 #pragma region Node
 
-class FGetWaveTableNode : public FNodeFacade {
-public:
-  // Constructor used by the Metasound Frontend.
-  FGetWaveTableNode(const FNodeInitData &InitData)
-      : FNodeFacade(InitData.InstanceName,
-                    InitData.InstanceID,
-                    Metasound::TFacadeOperatorClass<FGetWaveTableOperator>()) {}
-};
+using FGetWaveTableNode = TNodeFacade<FGetWaveTableOperator>;
 
 METASOUND_REGISTER_NODE(FGetWaveTableNode)
 

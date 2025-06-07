@@ -128,8 +128,9 @@ public:
     using namespace GetWaveTableFromWavBankNodeParameterNames;
 
     FWaveAssetReadRef InBankSoundWave =
-      InParams.InputData.GetOrConstructDataReadReference<FWaveAsset>(
-        METASOUND_GET_PARAM_NAME(InParamNameBankSoundWave));
+      InParams.InputData.GetOrCreateDefaultDataReadReference<FWaveAsset>(
+        METASOUND_GET_PARAM_NAME(InParamNameBankSoundWave),
+        InParams.OperatorSettings);
     
     FFloatReadRef InNormalizedFrameIndex =
       InParams.InputData.GetOrCreateDefaultDataReadReference<float>(
@@ -193,14 +194,7 @@ public:
 
 #pragma region Node
 
-class FGetWaveTableFromWavBankNode : public FNodeFacade {
-public:
-  // Constructor used by the Metasound Frontend.
-  FGetWaveTableFromWavBankNode(const FNodeInitData &InitData)
-      : FNodeFacade(InitData.InstanceName,
-                    InitData.InstanceID,
-                    Metasound::TFacadeOperatorClass<FGetWaveTableFromWavBankOperator>()) {}
-};
+using FGetWaveTableFromWavBankNode = TNodeFacade<FGetWaveTableFromWavBankOperator>;
 
 METASOUND_REGISTER_NODE(FGetWaveTableFromWavBankNode)
 
